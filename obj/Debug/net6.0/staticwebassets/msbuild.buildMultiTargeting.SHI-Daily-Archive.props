@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\SHI-Daily-Archive.props" />
+</Project>
