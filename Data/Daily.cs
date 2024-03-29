@@ -1,23 +1,29 @@
 namespace SHI_Daily_Archive.Data;
-public interface IDbAccess
-{
-    Task<List<T>> LoadData<T, U>(string sql, U parameters, string? connectionString);
-}
+
+using System.ComponentModel.DataAnnotations.Schema;
 public class Daily
 {
-    public int id { get; set; }        
-    public string? name { get; set; }
-    public string? path { get; set; }
-    public string? thumbnail { get; set; }
-    public string? category1 { get; set; }
-    public string? category2 { get; set; }
-    public string? compatibility { get; set; }
-    public string? version { get; set; }
-    public string? developer { get; set; }
-    public int runCount { get; set; }
-    public int favCount { get; set; }
-    public DateTime createdDate { get; set; }
-    public string? tag { get; set; }
-    public string? fileName { get; set; }
-    public string? fileSize { get; set; }
+    public int Date { get; set; }
+    public int FTL { get; set; }
+    public int FrontArmor { get; set; }
+    public int TopArmor { get; set; }
+    public int BottomArmor { get; set; }
+    public int Compact { get; set; }
+    public int CompactX { get; set; }
+    public int CompactY { get; set; }
+    public int Fuel { get; set; }
+    public int Thrust { get; set; }
+    public int Cargo { get; set; }
+    public int Radar { get; set; }
+    public int Comms { get; set; }
+    public int FirePower { get; set; }
+    public int Passengers { get; set; }
+    public int Command { get; set; }
+    public double Maneuverability { get; set; }
+    public int Cloaked { get; set; }
+    public int ExtremeHeat { get; set; }
+    public int ImportTax { get; set; }
+    public int TractorBeam { get; set; }
+    public int Cost { get; set; }
+    public int Score = 0;
 }

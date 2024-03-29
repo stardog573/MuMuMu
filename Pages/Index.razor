@@ -8,22 +8,140 @@
     private DailyContext? _context;
     public List<Daily>? Dailies { get; set; }
     public async Task ShowDailies()
+    {
+        _context ??= await DailyContextFactory.CreateDbContextAsync();
+
+        if (_context is not null)
         {
-            _context ??= await DailyContextFactory.CreateDbContextAsync();
-
-            if (_context is not null)
-            {
-                Dailies = await _context.Dailies.ToListAsync();
-            }
-
-            if (_context is not null) await _context.DisposeAsync();
+            Dailies = await _context.Dailies.ToListAsync();
         }
+        Dailies.ForEach(daily => Console.WriteLine(daily.FTL));
+        DateOnly date = new DateOnly(2024, 3, 29);
+        Int32 intDate = date.DayNumber;
+        if (_context is not null) await _context.DisposeAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {   
+            await ShowDailies();
+            StateHasChanged();
+        }
+    }  
 }
 
-<PageTitle>Index</PageTitle>
+<PageTitle>SHI Daily Challenges Archive</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<button class="btn btn-primary" type="button">
+    Apply Filter
+</button>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-end" scope="col">Date</th>
+            <th class="text-end" scope="col">FTL Core 2x3</th>
+            <th class="text-end" scope="col">Front Armor</th>
+            <th class="text-end" scope="col">Top Armor</th>
+            <th class="text-end" scope="col">Bottom Armor</th>
+            <th class="text-end" scope="col">Compact</th>
+            <th class="text-end" scope="col">Compact X</th>
+            <th class="text-end" scope="col">Compact Y</th>
+            <th class="text-end" scope="col">Fuel</th>
+            <th class="text-end" scope="col">Thrust</th>
+            <th class="text-end" scope="col">Cargo</th>
+            <th class="text-end" scope="col">Radar</th>
+            <th class="text-end" scope="col">Comms</th>
+            <th class="text-end" scope="col">Firepower</th>
+            <th class="text-end" scope="col">Passengers</th>
+            <th class="text-end" scope="col">Command</th>
+            <th class="text-end" scope="col">Maneuverability</th>
+            <th class="text-end" scope="col">Cloaked</th>
+            <th class="text-end" scope="col">Extreme Heat</th>
+            <th class="text-end" scope="col">Import Tax</th>
+            <th class="text-end" scope="col">Tractor Beam</th>
+            <th class="text-end" scope="col">Cost</th>
+            <th class="text-end" scope="col">GIF</th>
+        </tr>
+        <tr>
+            <th class="text-end" scope="col"></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=0>Any</option><option value=1>Close</option><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
+            <th class="text-end" scope="col"></th>
+            <th class="text-end" scope="col"></th>
+        </tr>
+        <tr>
+            <th class="text-end" scope="col"></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number"></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;"><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"></th>
+            <th class="text-end" scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (Dailies is not null) {
+        @foreach (var daily in Dailies) {
+            <tr>
+                <td class="text-end" scope="col">@DateOnly.FromDayNumber(daily.Date)</td>
+                <td class="text-end" scope="col">@daily.FTL</td>
+                <td class="text-end" scope="col">@daily.FrontArmor</td>
+                <td class="text-end" scope="col">@daily.TopArmor</td>
+                <td class="text-end" scope="col">@daily.BottomArmor</td>
+                <td class="text-end" scope="col">@daily.Compact</td>
+                <td class="text-end" scope="col">@daily.CompactX</td>
+                <td class="text-end" scope="col">@daily.CompactY</td>
+                <td class="text-end" scope="col">@daily.Fuel</td>
+                <td class="text-end" scope="col">@daily.Thrust</td>
+                <td class="text-end" scope="col">@daily.Cargo</td>
+                <td class="text-end" scope="col">@daily.Radar</td>
+                <td class="text-end" scope="col">@daily.Comms</td>
+                <td class="text-end" scope="col">@daily.FirePower</td>
+                <td class="text-end" scope="col">@daily.Passengers</td>
+                <td class="text-end" scope="col">@daily.Command</td>
+                <td class="text-end" scope="col">@daily.Maneuverability</td>
+                <td class="text-end" scope="col">@daily.Cloaked</td>
+                <td class="text-end" scope="col">@daily.ExtremeHeat</td>
+                <td class="text-end" scope="col">@daily.ImportTax</td>
+                <td class="text-end" scope="col">@daily.TractorBeam</td>
+                <td class="text-end" scope="col">@daily.Cost</td>
+                <td class="text-end" scope="col">[Open]</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>

@@ -16,5 +16,11 @@ public class DailyContext : DbContext
         options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Daily>().HasKey(e => e.Date);
+        modelBuilder.Entity<Daily>().HasData(new Daily {Date = 1, FTL = 0});
+        modelBuilder.Entity<Daily>().ToTable("Daily");
+    }
     public DbSet<Daily> Dailies { get; set; }
 }
