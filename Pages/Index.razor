@@ -1,4 +1,24 @@
-﻿@page "/"
+﻿@using Microsoft.EntityFrameworkCore
+@using SHI_Daily_Archive.Data
+@inject IDbContextFactory<DailyContext> DailyContextFactory;
+
+@page "/"
+
+@code {
+    private DailyContext? _context;
+    public List<Daily>? Dailies { get; set; }
+    public async Task ShowDailies()
+        {
+            _context ??= await DailyContextFactory.CreateDbContextAsync();
+
+            if (_context is not null)
+            {
+                Dailies = await _context.Dailies.ToListAsync();
+            }
+
+            if (_context is not null) await _context.DisposeAsync();
+        }
+}
 
 <PageTitle>Index</PageTitle>
 

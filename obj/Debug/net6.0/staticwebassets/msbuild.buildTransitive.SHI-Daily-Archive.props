@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\SHI-Daily-Archive.props" />
-</Project>
