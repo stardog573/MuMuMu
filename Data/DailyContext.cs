@@ -18,8 +18,7 @@ public class DailyContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Daily>().HasKey(e => e.Date);
-        modelBuilder.Entity<Daily>().HasData(new Daily {Date = 1, FTL = 0});
+        modelBuilder.Entity<Daily>().HasKey(e => e.Id);
         modelBuilder.Entity<Daily>().ToTable("Daily");
     }
     public DbSet<Daily> Dailies { get; set; }

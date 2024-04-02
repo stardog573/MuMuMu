@@ -3,6 +3,7 @@ namespace SHI_Daily_Archive.Data;
 using System.ComponentModel.DataAnnotations.Schema;
 public class Daily
 {
+    public int Id { get; set; }
     public int Date { get; set; }
     public int FTL { get; set; }
     public int FrontArmor { get; set; }
@@ -25,5 +26,5 @@ public class Daily
     public int ImportTax { get; set; }
     public int TractorBeam { get; set; }
     public int Cost { get; set; }
-    public int Score = 0;
+    public double Score = 0;
 }
