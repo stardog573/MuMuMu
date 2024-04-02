@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-//var url = $"http://0.0.0.0:{port}";
+var url = $"http://0.0.0.0:{port}";
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -33,5 +33,5 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-//app.Run(url);
-app.Run();
+app.Run(url);
+//app.Run();
