@@ -25,8 +25,7 @@
     private int Cloaked = 0;
     private int ExtremeHeat = 0;
     private int ImportTax = 0;
-    private int TractorBeam = 0;
-    private int Cost = 0;
+    //private int TractorBeam = 0;
     private int GIF = 0;
     private DailyContext? _context;
     private List<Daily> Dailies = new List<Daily> {};
@@ -177,7 +176,7 @@
                 <td class="text-end" scope="col">@(daily.ImportTax != 0 ? "Yes" : "No")</td>
                 <td class="text-end" scope="col">@(daily.TractorBeam != 0 ? "Yes" : "No")</td>
                 <td class="text-end" scope="col">@daily.Cost</td>
-                <td class="text-end" scope="col"><button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#image@(daily.Id)">[Open]</button></td>
+                <td class="text-end" scope="col"><button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#GIFImage" @onclick=@(() => GIF = daily.Id)>[Open]</button></td>
             </tr>
         }
     }
@@ -189,21 +188,15 @@
     <li class='page-item @(page + 10 >= DailiesFiltered.Count ? "disabled" : "")'><button class="page-link" @onclick=@(() => page += 10)>Next</button></li>
   </ul>
 </nav>
-@for (var i=page; i<page+10; i++) {
-    var ii = i;
-    if (ii < DailiesFiltered.Count) {
-        var daily = DailiesFiltered[ii];
-        <div class="modal fade" id="image@(daily.Id)" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <img src="images/@(daily.Id).gif" />
-                    </div>
-                </div>
+<div class="modal fade" id="GIFImage" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="images/@(GIF).gif" />
             </div>
         </div>
-    }
-}
+    </div>
+</div>
