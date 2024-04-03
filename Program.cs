@@ -34,4 +34,3 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run(url);
-//app.Run();

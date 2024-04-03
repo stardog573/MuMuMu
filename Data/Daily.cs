@@ -25,6 +25,7 @@ public class Daily
     public int ExtremeHeat { get; set; }
     public int ImportTax { get; set; }
     public int TractorBeam { get; set; }
+    public int ConnectedCrew { get; set; }
     public int Cost { get; set; }
     public double Score = 0;
 }

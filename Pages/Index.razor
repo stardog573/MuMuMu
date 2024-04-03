@@ -1,10 +1,12 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @using SHI_Daily_Archive.Data
 @inject IDbContextFactory<DailyContext> DailyContextFactory;
+@inject NavigationManager NavManager;
 
 @page "/"
 
 @code {
+    [Parameter] [SupplyParameterFromQuery] public string? q {get; set;}
     private int page = 0;
     private int FTL = 0;
     private int FrontArmor = 0;
@@ -25,7 +27,8 @@
     private int Cloaked = 0;
     private int ExtremeHeat = 0;
     private int ImportTax = 0;
-    //private int TractorBeam = 0;
+    private int TractorBeam = 0;
+    private int ConnectedCrew = 0;
     private int GIF = 0;
     private DailyContext? _context;
     private List<Daily> Dailies = new List<Daily> {};
@@ -33,7 +36,7 @@
     private void ApplyFilter() {
         page = 0;
         DailiesFiltered = Dailies.Where(d => d.FTL == FTL && d.FrontArmor == FrontArmor && d.TopArmor == TopArmor && d.BottomArmor == BottomArmor && d.Compact == Compact && d.CompactX == CompactX 
-            && d.CompactY == CompactY && d.Cloaked == Cloaked && d.ExtremeHeat == ExtremeHeat && d.ImportTax == ImportTax).ToList();
+            && d.CompactY == CompactY && d.Cloaked == Cloaked && d.ExtremeHeat == ExtremeHeat && d.ImportTax == ImportTax && d.ConnectedCrew == ConnectedCrew).ToList();
         DailiesFiltered.ForEach(d => d.Score = Math.Abs(d.Fuel - Fuel) + Math.Abs(d.Thrust - Thrust) + Math.Abs(d.Cargo - Cargo) + Math.Abs(d.Radar - Radar) + Math.Abs(d.Comms - Comms) + Math.Abs(d.FirePower - FirePower) 
             + Math.Abs(d.Passengers - Passengers) + Math.Abs(d.Command - Command) + Math.Abs(d.Maneuverability - Maneuverability) * 20.0);
         DailiesFiltered = DailiesFiltered.OrderBy(d=>d.Score).ToList();
@@ -57,6 +60,29 @@
         if(firstRender)
         {   
             await ShowDailies();
+            if (q is not null) {
+                FTL = Convert.ToInt32(q.Substring(0, 1));
+                FrontArmor = Convert.ToInt32(q.Substring(1, 1));
+                TopArmor = Convert.ToInt32(q.Substring(2, 1));
+                BottomArmor = Convert.ToInt32(q.Substring(3, 1));
+                Compact = Convert.ToInt32(q.Substring(4, 1));
+                CompactX = Convert.ToInt32(q.Substring(5, 1));
+                CompactY = Convert.ToInt32(q.Substring(6, 1));
+                Fuel = Convert.ToInt32(q.Substring(7, 2));
+                Thrust = Convert.ToInt32(q.Substring(9, 2));
+                Cargo = Convert.ToInt32(q.Substring(11, 2));
+                Radar = Convert.ToInt32(q.Substring(13, 2));
+                Comms = Convert.ToInt32(q.Substring(15, 2));
+                FirePower = Convert.ToInt32(q.Substring(17, 2));
+                Passengers = Convert.ToInt32(q.Substring(19, 2));
+                Command = Convert.ToInt32(q.Substring(21, 2));
+                Maneuverability = Convert.ToDouble(q.Substring(23, 4));
+                Cloaked = Convert.ToInt32(q.Substring(27, 1));
+                ExtremeHeat = Convert.ToInt32(q.Substring(28, 1));
+                ImportTax = Convert.ToInt32(q.Substring(29, 1));
+                TractorBeam = Convert.ToInt32(q.Substring(30, 1));
+                ConnectedCrew = Convert.ToInt32(q.Substring(31, 1));
+            }
             StateHasChanged();
         }
     }  
@@ -70,6 +96,7 @@
 <button class="btn btn-secondary" type="button" @onclick=ClearFilter>
     Clear Filter
 </button>
+<p>Share Link : @(NavManager.BaseUri)?q=@(FTL)@(FrontArmor)@(TopArmor)@(BottomArmor)@(Compact)@(CompactX)@(CompactY)@(Fuel.ToString("00"))@(Thrust.ToString("00"))@(Cargo.ToString("00"))@(Radar.ToString("00"))@(Comms.ToString("00"))@(FirePower.ToString("00"))@(Passengers.ToString("00"))@(Command.ToString("00"))@(Maneuverability.ToString("0.00"))@(Cloaked)@(ExtremeHeat)@(ImportTax)@(TractorBeam)@(ConnectedCrew)</p>
 <table class="table">
     <thead>
         <tr>
@@ -94,6 +121,7 @@
             <th class="text-end" scope="col">Extreme Heat</th>
             <th class="text-end" scope="col">Import Tax</th>
             <th class="text-end" scope="col">Tractor Beam</th>
+            <th class="text-end" scope="col">Connected Crew</th>
             <th class="text-end" scope="col">Cost</th>
             <th class="text-end" scope="col">GIF</th>
         </tr>
@@ -119,6 +147,7 @@
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=0>Any</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
             <th class="text-end" scope="col"></th>
             <th class="text-end" scope="col"></th>
         </tr>
@@ -144,6 +173,7 @@
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ExtremeHeat><option value=1>Yes</option><option value=0>No</option></select></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ImportTax><option value=1>Yes</option><option value=0>No</option></select></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Any</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ConnectedCrew><option value=1>Yes</option><option value=0>No</option></select></th>
             <th class="text-end" scope="col"></th>
             <th class="text-end" scope="col"></th>
         </tr>
@@ -175,6 +205,7 @@
                 <td class="text-end" scope="col">@(daily.ExtremeHeat != 0 ? "Yes" : "No")</td>
                 <td class="text-end" scope="col">@(daily.ImportTax != 0 ? "Yes" : "No")</td>
                 <td class="text-end" scope="col">@(daily.TractorBeam != 0 ? "Yes" : "No")</td>
+                <td class="text-end" scope="col">@(daily.ConnectedCrew != 0 ? "Yes" : "No")</td>
                 <td class="text-end" scope="col">@daily.Cost</td>
                 <td class="text-end" scope="col"><button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#GIFImage" @onclick=@(() => GIF = daily.Id)>[Open]</button></td>
             </tr>
