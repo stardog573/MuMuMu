@@ -9,12 +9,8 @@
     [Parameter] [SupplyParameterFromQuery] public string? q {get; set;}
     private int page = 0;
     private int FTL = 0;
-    private int FrontArmor = 0;
-    private int TopArmor = 0;
-    private int BottomArmor = 0;
-    private int Compact = 0;
-    private int CompactX = 0;
-    private int CompactY = 0;
+    private int ArmorOption = 0;
+    private int CompactOption = 0;
     private int Fuel = 0;
     private int Thrust = 0;
     private int Cargo = 0;
@@ -27,16 +23,36 @@
     private int Cloaked = 0;
     private int ExtremeHeat = 0;
     private int ImportTax = 0;
-    private int TractorBeam = 0;
-    private int ConnectedCrew = 0;
+    private int TractorBeam = 2;
+    private int ConnectedCrew = 2;
     private int GIF = 0;
     private DailyContext? _context;
     private List<Daily> Dailies = new List<Daily> {};
     private List<Daily> DailiesFiltered = new List<Daily> {};
+    private bool ArmorFilter(Daily d, int armorOption) {
+        switch (armorOption) {
+            case 1: return d.FrontArmor + d.TopArmor + d.BottomArmor == 0;
+            case 2: return d.FrontArmor == 1 && d.TopArmor + d.BottomArmor == 0;
+            case 3: return d.FrontArmor == 1 && d.TopArmor + d.BottomArmor == 1;
+            case 4: return d.FrontArmor == 0 && d.TopArmor + d.BottomArmor == 2;
+            case 5: return d.FrontArmor == 1 && d.TopArmor + d.BottomArmor == 2;
+            default: return true;
+        }
+    }
+    private bool CompactFilter(Daily d, int compactOption) {
+        switch (compactOption) {
+            case 1: return d.Compact == 1;
+            case 2: return d.CompactX == 1;
+            case 3: return d.CompactY == 1;
+            default: return d.Compact + d.CompactX + d.CompactY == 0;
+        }
+    }
     private void ApplyFilter() {
         page = 0;
-        DailiesFiltered = Dailies.Where(d => d.FTL == FTL && d.FrontArmor == FrontArmor && d.TopArmor == TopArmor && d.BottomArmor == BottomArmor && d.Compact == Compact && d.CompactX == CompactX 
-            && d.CompactY == CompactY && d.Cloaked == Cloaked && d.ExtremeHeat == ExtremeHeat && d.ImportTax == ImportTax && d.ConnectedCrew == ConnectedCrew).ToList();
+        DailiesFiltered = Dailies.Where(d => d.FTL == FTL 
+            && ArmorFilter(d, ArmorOption)
+            && CompactFilter(d, CompactOption)
+            && d.Cloaked == Cloaked && d.ExtremeHeat == ExtremeHeat && d.ImportTax == ImportTax && (d.TractorBeam == TractorBeam || TractorBeam == 2) && (d.ConnectedCrew == ConnectedCrew || ConnectedCrew == 2)).ToList();
         DailiesFiltered.ForEach(d => d.Score = Math.Abs(d.Fuel - Fuel) + Math.Abs(d.Thrust - Thrust) + Math.Abs(d.Cargo - Cargo) + Math.Abs(d.Radar - Radar) + Math.Abs(d.Comms - Comms) + Math.Abs(d.FirePower - FirePower) 
             + Math.Abs(d.Passengers - Passengers) + Math.Abs(d.Command - Command) + Math.Abs(d.Maneuverability - Maneuverability) * 20.0);
         DailiesFiltered = DailiesFiltered.OrderBy(d=>d.Score).ToList();
@@ -62,26 +78,22 @@
             await ShowDailies();
             if (q is not null) {
                 FTL = Convert.ToInt32(q.Substring(0, 1));
-                FrontArmor = Convert.ToInt32(q.Substring(1, 1));
-                TopArmor = Convert.ToInt32(q.Substring(2, 1));
-                BottomArmor = Convert.ToInt32(q.Substring(3, 1));
-                Compact = Convert.ToInt32(q.Substring(4, 1));
-                CompactX = Convert.ToInt32(q.Substring(5, 1));
-                CompactY = Convert.ToInt32(q.Substring(6, 1));
-                Fuel = Convert.ToInt32(q.Substring(7, 2));
-                Thrust = Convert.ToInt32(q.Substring(9, 2));
-                Cargo = Convert.ToInt32(q.Substring(11, 2));
-                Radar = Convert.ToInt32(q.Substring(13, 2));
-                Comms = Convert.ToInt32(q.Substring(15, 2));
-                FirePower = Convert.ToInt32(q.Substring(17, 2));
-                Passengers = Convert.ToInt32(q.Substring(19, 2));
-                Command = Convert.ToInt32(q.Substring(21, 2));
-                Maneuverability = Convert.ToDouble(q.Substring(23, 4));
-                Cloaked = Convert.ToInt32(q.Substring(27, 1));
-                ExtremeHeat = Convert.ToInt32(q.Substring(28, 1));
-                ImportTax = Convert.ToInt32(q.Substring(29, 1));
-                TractorBeam = Convert.ToInt32(q.Substring(30, 1));
-                ConnectedCrew = Convert.ToInt32(q.Substring(31, 1));
+                ArmorOption = Convert.ToInt32(q.Substring(1, 1));
+                CompactOption = Convert.ToInt32(q.Substring(2, 1));
+                Fuel = Convert.ToInt32(q.Substring(3, 2));
+                Thrust = Convert.ToInt32(q.Substring(5, 2));
+                Cargo = Convert.ToInt32(q.Substring(7, 2));
+                Radar = Convert.ToInt32(q.Substring(9, 2));
+                Comms = Convert.ToInt32(q.Substring(11, 2));
+                FirePower = Convert.ToInt32(q.Substring(13, 2));
+                Passengers = Convert.ToInt32(q.Substring(15, 2));
+                Command = Convert.ToInt32(q.Substring(17, 2));
+                Maneuverability = Convert.ToDouble(q.Substring(19, 4));
+                Cloaked = Convert.ToInt32(q.Substring(23, 1));
+                ExtremeHeat = Convert.ToInt32(q.Substring(24, 1));
+                ImportTax = Convert.ToInt32(q.Substring(25, 1));
+                TractorBeam = Convert.ToInt32(q.Substring(26, 1));
+                ConnectedCrew = Convert.ToInt32(q.Substring(27, 1));
                 ApplyFilter();
             }
             StateHasChanged();
@@ -97,18 +109,19 @@
 <button class="btn btn-secondary" type="button" @onclick=ClearFilter>
     Clear Filter
 </button>
-<p>Share Link : @(NavManager.BaseUri)?q=@(FTL)@(FrontArmor)@(TopArmor)@(BottomArmor)@(Compact)@(CompactX)@(CompactY)@(Fuel.ToString("00"))@(Thrust.ToString("00"))@(Cargo.ToString("00"))@(Radar.ToString("00"))@(Comms.ToString("00"))@(FirePower.ToString("00"))@(Passengers.ToString("00"))@(Command.ToString("00"))@(Maneuverability.ToString("0.00"))@(Cloaked)@(ExtremeHeat)@(ImportTax)@(TractorBeam)@(ConnectedCrew)</p>
+<p>Share Link : @(NavManager.BaseUri)?q=@(FTL)@(ArmorOption)@(CompactOption)@(Fuel.ToString("00"))@(Thrust.ToString("00"))@(Cargo.ToString("00"))@(Radar.ToString("00"))@(Comms.ToString("00"))@(FirePower.ToString("00"))@(Passengers.ToString("00"))@(Command.ToString("00"))@(Maneuverability.ToString("0.00"))@(Cloaked)@(ExtremeHeat)@(ImportTax)@(TractorBeam)@(ConnectedCrew)</p>
 <table class="table">
     <thead>
         <tr>
             <th class="text-end" scope="col">Date</th>
             <th class="text-end" scope="col">FTL Core 2x3</th>
+            <th class="text-end" scope="col">Tractor Beam</th>
             <th class="text-end" scope="col">Front Armor</th>
             <th class="text-end" scope="col">Top Armor</th>
             <th class="text-end" scope="col">Bottom Armor</th>
+            <th class="text-end" scope="col">Extreme Heat</th>
+            <th class="text-end" scope="col">Cloaked</th>
             <th class="text-end" scope="col">Compact</th>
-            <th class="text-end" scope="col">Compact X</th>
-            <th class="text-end" scope="col">Compact Y</th>
             <th class="text-end" scope="col">Fuel</th>
             <th class="text-end" scope="col">Thrust</th>
             <th class="text-end" scope="col">Cargo</th>
@@ -118,63 +131,30 @@
             <th class="text-end" scope="col">Passengers</th>
             <th class="text-end" scope="col">Command</th>
             <th class="text-end" scope="col">Maneuverability</th>
-            <th class="text-end" scope="col">Cloaked</th>
-            <th class="text-end" scope="col">Extreme Heat</th>
             <th class="text-end" scope="col">Import Tax</th>
-            <th class="text-end" scope="col">Tractor Beam</th>
             <th class="text-end" scope="col">Connected Crew</th>
             <th class="text-end" scope="col">Cost</th>
             <th class="text-end" scope="col">GIF</th>
         </tr>
         <tr>
             <th class="text-end" scope="col"></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Close</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=0>Any</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=2>Exact</option></select></th>
-            <th class="text-end" scope="col"></th>
-            <th class="text-end" scope="col"></th>
-        </tr>
-        <tr>
-            <th class="text-end" scope="col"></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=FTL><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=FrontArmor><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=TopArmor><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=BottomArmor><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=Compact><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=CompactX><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=CompactY><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Fuel></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Thrust></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Cargo></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Radar></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Comms></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=FirePower></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Passengers></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Command></th>
-            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" @bind=Maneuverability></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=Cloaked><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=TractorBeam><option value=2>Both</option><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col" colspan="3"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ArmorOption><option value=0>Any</option><option value=1>None</option><option value=2>Front Only</option><option value=3>Front & Top / Front & Bottom</option><option value=4>Top & Bottom</option><option value=5>Front & Top & Bottom</option></select></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ExtremeHeat><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=Cloaked><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 7rem;" @bind=CompactOption><option value=0>No</option><option value=1>Compact</option><option value=2>CompactX</option><option value=3>CompactY</option></select></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Fuel></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Thrust></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Cargo></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Radar></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Comms></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=FirePower></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Passengers></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Command></th>
+            <th class="text-end" scope="col"><input class="form-control form-control-sm" type="number" style="min-width: 3.5rem;" @bind=Maneuverability></th>
             <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ImportTax><option value=1>Yes</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" disabled><option value=1>Any</option><option value=0>No</option></select></th>
-            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ConnectedCrew><option value=1>Yes</option><option value=0>No</option></select></th>
+            <th class="text-end" scope="col"><select class="form-select form-select-sm" style="min-width: 5.5rem;" @bind=ConnectedCrew><option value=2>Both</option><option value=1>Yes</option><option value=0>No</option></select></th>
             <th class="text-end" scope="col"></th>
             <th class="text-end" scope="col"></th>
         </tr>
@@ -186,13 +166,14 @@
             var daily = DailiesFiltered[ii];
             <tr>
                 <td class="text-end" scope="col">@DateOnly.FromDayNumber(daily.Date)</td>
-                <td class="text-end" scope="col">@(daily.FTL != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.FrontArmor != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.TopArmor != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.BottomArmor != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.Compact != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.CompactX != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.CompactY != 0 ? "Yes" : "No")</td>
+                <td class="text-center" scope="col">@(daily.FTL != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.TractorBeam != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.FrontArmor != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.TopArmor != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.BottomArmor != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.ExtremeHeat != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.Cloaked != 0 ? "O" : "")</td>
+                <td class="text-end" scope="col">@(daily.Compact != 0 ? "Compact" : "")@(daily.CompactX != 0 ? "CompactX" : "")@(daily.CompactY != 0 ? "CompactY" : "")</td>
                 <td class="text-end" scope="col">@daily.Fuel</td>
                 <td class="text-end" scope="col">@daily.Thrust</td>
                 <td class="text-end" scope="col">@daily.Cargo</td>
@@ -202,11 +183,8 @@
                 <td class="text-end" scope="col">@daily.Passengers</td>
                 <td class="text-end" scope="col">@daily.Command</td>
                 <td class="text-end" scope="col">@daily.Maneuverability</td>
-                <td class="text-end" scope="col">@(daily.Cloaked != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.ExtremeHeat != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.ImportTax != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.TractorBeam != 0 ? "Yes" : "No")</td>
-                <td class="text-end" scope="col">@(daily.ConnectedCrew != 0 ? "Yes" : "No")</td>
+                <td class="text-center" scope="col">@(daily.ImportTax != 0 ? "O" : "")</td>
+                <td class="text-center" scope="col">@(daily.ConnectedCrew != 0 ? "O" : "")</td>
                 <td class="text-end" scope="col">@daily.Cost</td>
                 <td class="text-end" scope="col"><button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#GIFImage" @onclick=@(() => GIF = daily.Id)>[Open]</button></td>
             </tr>
