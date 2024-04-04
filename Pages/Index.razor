@@ -82,6 +82,7 @@
                 ImportTax = Convert.ToInt32(q.Substring(29, 1));
                 TractorBeam = Convert.ToInt32(q.Substring(30, 1));
                 ConnectedCrew = Convert.ToInt32(q.Substring(31, 1));
+                ApplyFilter();
             }
             StateHasChanged();
         }
